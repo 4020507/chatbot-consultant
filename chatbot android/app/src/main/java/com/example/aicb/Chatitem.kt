@@ -1,13 +1,12 @@
 package com.example.aicb
 
-class Chatitem(_chat: String?, _type: Int) {
-    var chat = _chat
-    var type = _type
-    
+class ChatItem(var chat: String, var type: Int, var action: Int) {
+
     override fun toString(): String {
         return "ChatItem{" +
                 "chat='" + chat + '\'' +
                 ", type=" + type +
+                ", action=" + action +
                 '}'
     }
 }

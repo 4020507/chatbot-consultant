@@ -7,14 +7,8 @@
     android:background="@color/white"
     tools:context="com.example.aicb.MainActivity">
 
-    <data>
-
-        <variable
-            android:name="viewModel"
-            android:type="com.example.aicb.KomoranViewModel" />
-    </data>
-
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="wrap_content"
         android:fillViewport="true"
         android:layout_height="680dp"

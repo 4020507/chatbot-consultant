@@ -3,6 +3,7 @@ package com.example.aicb
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.pedro.library.AutoPermissions.Companion.loadAllPermissions
+import kotlinx.android.synthetic.main.map_fragment.*
 
 class MapFragment: Fragment() {
     var mainActivity: MainActivity? = null
@@ -49,9 +51,9 @@ class MapFragment: Fragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val rootView = layoutInflater.inflate(R.layout.map_fragment, container, false) as ViewGroup
         mapFragment = (this.childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?)!!
@@ -60,11 +62,11 @@ class MapFragment: Fragment() {
             Log.d("Map", "지도 준비 완료")
             map = googleMap
             if (ActivityCompat.checkSelfPermission(
-                            requireContext(),
-                            Manifest.permission.ACCESS_FINE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                            requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
             ) {
                 loadAllPermissions((context as Activity?)!!, 101)
                 return@OnMapReadyCallback
@@ -72,6 +74,14 @@ class MapFragment: Fragment() {
             map.setMyLocationEnabled(true)
             startLocationService()
         })
+
+        button.setOnClickListener { View.OnClickListener {
+            fun onClick(v: View?) {
+                val intent = Intent(context, MainActivity::class.java)
+                startActivity(intent)
+                requireActivity().finish()
+            }
+        } }
 
         return rootView
     }
@@ -112,7 +122,12 @@ class MapFragment: Fragment() {
 
             //lat lon lat lon
             for (i in 0 until size) {
-                cal = distance(latitude, longitude, hospital!!.get(i).latitdue, hospital!!.get(i).longitude)
+                cal = distance(
+                    latitude,
+                    longitude,
+                    hospital!!.get(i).latitdue,
+                    hospital!!.get(i).longitude
+                )
                 if (cal < min) {
                     min = cal
                     model.setShortest_name(hospital!!.get(i).name)
@@ -122,16 +137,26 @@ class MapFragment: Fragment() {
                     model.setShortest_number(hospital!!.get(i).number)
                 }
             }
-            Log.d("병원:", model.getShortest_name().toString() + " " + model.getShortest_latitude() + " " + model.getShortest_longitude())
-            showCurrentLocation(model.getShortest_name().toString(), model.getShortest_latitude().value!!,
-                    model.getShortest_longitude().value!!, model.getShortest_number().toString())
+            Log.d("병원:",
+                model.getShortest_name()
+                    .toString() + " " + model.getShortest_latitude() + " " + model.getShortest_longitude()
+            )
+            showCurrentLocation(
+                model.getShortest_name().toString(), model.getShortest_latitude().value!!,
+                model.getShortest_longitude().value!!, model.getShortest_number().toString()
+            )
         }
 
-        private fun distance(my_latitude: Double, my_longitude: Double, h_latitude: Double, h_longitude: Double): Double {
+        private fun distance(
+            my_latitude: Double,
+            my_longitude: Double,
+            h_latitude: Double,
+            h_longitude: Double
+        ): Double {
             val theta = my_longitude - h_longitude
             var distance = Math.sin(deg2rad(my_latitude)) * Math.sin(deg2rad(h_latitude)) +
                     Math.cos(deg2rad(my_latitude)) * Math.cos(deg2rad(h_latitude)) * Math.cos(
-                    deg2rad(theta)
+                deg2rad(theta)
             )
             distance = Math.acos(distance)
             distance = rad2deg(distance)
@@ -149,7 +174,12 @@ class MapFragment: Fragment() {
             return rad * 180 / Math.PI
         }
 
-        private fun showCurrentLocation(name: String, latitude: Double, logitude: Double, number: String) {
+        private fun showCurrentLocation(
+            name: String,
+            latitude: Double,
+            logitude: Double,
+            number: String
+        ) {
             if (name == "") {
                 Toast.makeText(cont, "알맞는 병원을 찾지 못하였습니다.", Toast.LENGTH_LONG).show()
                 return
@@ -166,7 +196,11 @@ class MapFragment: Fragment() {
                 myLocationMarker!!.position(curPoint)
                 myLocationMarker!!.title(name)
                 myLocationMarker!!.snippet(number)
-                myLocationMarker!!.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
+                myLocationMarker!!.icon(
+                    BitmapDescriptorFactory.defaultMarker(
+                        BitmapDescriptorFactory.HUE_VIOLET
+                    )
+                )
                 map.addMarker(myLocationMarker)
             } else {
                 myLocationMarker!!.position(curPoint)
@@ -181,7 +215,9 @@ class MapFragment: Fragment() {
     override fun onResume() {
         super.onResume()
 
-        if (ActivityCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        //map을 다루기전, 허가가 필요
+        if (ActivityCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                cont, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             loadAllPermissions((context as Activity?)!!, 101)
             return
         }
@@ -191,7 +227,8 @@ class MapFragment: Fragment() {
     override fun onPause() {
         super.onPause()
 
-        if (ActivityCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                cont,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             loadAllPermissions((context as Activity?)!!, 101)
             return
         }

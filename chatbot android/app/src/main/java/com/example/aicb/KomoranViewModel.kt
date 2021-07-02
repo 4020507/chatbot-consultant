@@ -18,8 +18,8 @@ class KomoranViewModel: ViewModel() {
         this.komoran.value = komoran
     }
 
-    fun getKomoran(): LiveData<Komoran> {
-        return this.komoran
+    fun getKomoran(): Komoran {
+        return this.komoran.value!!
     }
 
     fun setShortest_name(shortest_name: String)

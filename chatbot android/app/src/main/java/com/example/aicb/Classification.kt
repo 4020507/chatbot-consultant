@@ -13,6 +13,7 @@ import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.util.*
 import org.tensorflow.lite.Interpreter
+import kotlin.collections.HashMap
 
 class Classification(_context: Context) {
     private val TAG = "ClassificationDemo"
@@ -24,11 +25,11 @@ class Classification(_context: Context) {
     private val UNKNOWN = "OOV"
 
     private var context = _context
-    private lateinit var dic: MutableMap<String, Int>
-    private lateinit var labels: MutableList<String>
+    private var dic: MutableMap<String, Int> = HashMap()
+    private var labels: MutableList<String> = ArrayList()
     private lateinit var tflite:Interpreter
 
-    class Result(val _id: String, val _title: String, val _confidence: Float){
+    inner class Result(val _id: String, val _title: String, val _confidence: Float){
         private var id = _id
         private var title = _title
         private var confidence = _confidence
