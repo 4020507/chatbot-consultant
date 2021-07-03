@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         class="com.google.android.gms.maps.SupportMapFragment"/>
     <Button
-        android:id="@+id/button"
+        android:id="@+id/back_button"
         android:text="앱으로 이동"
         android:textSize="20dp"
         android:layout_width="wrap_content"

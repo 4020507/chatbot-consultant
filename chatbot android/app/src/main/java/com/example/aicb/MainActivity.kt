@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         if (cursor.count != 0) {
             for (i in 0 until cursor.count) {
                 cursor.moveToNext()
-                Log.d("Chat_log", cursor.getString(0) + " " + cursor.getInt(1) + " " + i)
+                Log.d("Chat_log", cursor.getString(0) + " " + cursor.getInt(1))
                 adapter.addItem(ChatItem(cursor.getString(0), cursor.getInt(1), cursor.getInt(2)))
             }
             listView.setAdapter(adapter)
@@ -123,22 +123,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         //인터넷 접속, 전화걸기
-        listView.setOnItemClickListener(
-            AdapterView.OnItemClickListener() { adapterView: AdapterView<*>, view1: View, i: Int, l: Long ->
-                fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    val chatItem = adapter.getItem(position) as ChatItem
-                    Log.d("action", "" + chatItem.action)
+        listView.setOnItemClickListener { parent, view, position, id ->
+            val chatItem = adapter.getItem(position) as ChatItem
+            Log.d("action", "" + chatItem.action)
 
-                    //action이 1이라면 홈페이지 접속, 2라면 전화걸기
-                    if (chatItem.action == 1) {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(chatItem.chat))
-                        startActivity(intent)
-                    } else if (chatItem.action == 2) {
-                        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + chatItem.chat))
-                        startActivity(intent)
-                    }
-                }
-            })
+            //action이 1이라면 홈페이지 접속, 2라면 전화걸기
+            if (chatItem.action == 1) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(chatItem.chat))
+                startActivity(intent)
+            } else if (chatItem.action == 2) {
+                val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + chatItem.chat))
+                startActivity(intent)
+            }
+
+        }
 
 
 
@@ -179,11 +177,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun classify(text: String?) {
-        val results: List<Classification.Result> = classification.classify(
-            model.getKomoran(),
-            text!!
-        )
-        val pos_text = classification.posTag(model.getKomoran(), text)
+        val results: List<Classification.Result> = classification.classify(model.getKomoran(),text!!)
+        //val pos_text = classification.posTag(model.getKomoran(), text)
 
         //float[][] input_embed = classification.tokenizeInputText(pos_text);
         var result = ""
@@ -237,19 +232,8 @@ class MainActivity : AppCompatActivity() {
                 handler.postDelayed({
                     //가까운 병원 주소 및 전화번호 소개
                     Log.d("shortest_address", model.getShortest_address().value!!)
-                    adapter.addItem(
-                        ChatItem(
-                            "가까운 " + model.getShortest_name().value!! + "에서 상담을 받아봐요",
-                            1,
-                            0
-                        )
-                    )
-                    chatTable.insert(
-                        "Chat_log",
-                        "가까운 " + model.getShortest_name().value!! + "에서 상담을 받아봐요",
-                        1,
-                        0
-                    )
+                    adapter.addItem(ChatItem("가까운 " + model.getShortest_name().value!! + "에서 상담을 받아봐요",1, 0))
+                    chatTable.insert( "Chat_log", "가까운 " + model.getShortest_name().value!! + "에서 상담을 받아봐요",1, 0)
 
                     //가끔 인터넷 주소 정보가 없는 경우도 있음
                     if (!model.getShortest_address().value.equals("https://")) {
@@ -295,17 +279,10 @@ class MainActivity : AppCompatActivity() {
             Log.d("현재 위치", message)
         }
 
-        private fun distance(
-            my_latitude: Double,
-            my_longitude: Double,
-            h_latitude: Double,
-            h_longitude: Double
-        ): Double {
+        private fun distance(my_latitude: Double,my_longitude: Double,h_latitude: Double,h_longitude: Double): Double {
             val theta = my_longitude - h_longitude
             var distance = Math.sin(deg2rad(my_latitude)) * Math.sin(deg2rad(h_latitude)) +
-                    Math.cos(deg2rad(my_latitude)) * Math.cos(deg2rad(h_latitude)) * Math.cos(
-                deg2rad(theta)
-            )
+                    Math.cos(deg2rad(my_latitude)) * Math.cos(deg2rad(h_latitude)) * Math.cos(deg2rad(theta))
             distance = Math.acos(distance)
             distance = rad2deg(distance)
             distance = distance * 60 * 1.1515
@@ -362,7 +339,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             val items:ChatItem = item.get(position)
-
+            Log.d("type",items.type.toString())
             view.setChat(items.chat, items.type, applicationContext)
 
             return view
@@ -407,10 +384,7 @@ class MainActivity : AppCompatActivity() {
                     //찾았다면 log를 찍기, 이 log정보를 복사하여 hospital.txt 파일을 assets폴더에 저장
                     writer.write(info[i].toString() + " " + address[0].latitude + " " + address[0].longitude)
                     writer.newLine()
-                    Log.d(
-                        "이름/좌표",
-                        info[i].first.toString() + " " + address[0].latitude + " " + address[0].longitude + " " + info[i].second.second.first + " " + info[i].second.second.second
-                    )
+                    Log.d("이름/좌표",info[i].first.toString() + " " + address[0].latitude + " " + address[0].longitude + " " + info[i].second.second.first + " " + info[i].second.second.second)
                 }
             } catch (e: IOException) {
                 e.printStackTrace()

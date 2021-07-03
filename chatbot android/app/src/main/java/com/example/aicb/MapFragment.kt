@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.pedro.library.AutoPermissions.Companion.loadAllPermissions
 import kotlinx.android.synthetic.main.map_fragment.*
+import kotlinx.android.synthetic.main.map_fragment.view.*
 
 class MapFragment: Fragment() {
     var mainActivity: MainActivity? = null
@@ -56,8 +57,10 @@ class MapFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val rootView = layoutInflater.inflate(R.layout.map_fragment, container, false) as ViewGroup
+
         mapFragment = (this.childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?)!!
         cont = rootView.context
+
         mapFragment.getMapAsync(OnMapReadyCallback { googleMap ->
             Log.d("Map", "지도 준비 완료")
             map = googleMap
@@ -75,13 +78,11 @@ class MapFragment: Fragment() {
             startLocationService()
         })
 
-        button.setOnClickListener { View.OnClickListener {
-            fun onClick(v: View?) {
-                val intent = Intent(context, MainActivity::class.java)
-                startActivity(intent)
-                requireActivity().finish()
-            }
-        } }
+        rootView.back_button.setOnClickListener {
+            val intent = Intent(context, MainActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
+        }
 
         return rootView
     }
@@ -122,28 +123,20 @@ class MapFragment: Fragment() {
 
             //lat lon lat lon
             for (i in 0 until size) {
-                cal = distance(
-                    latitude,
-                    longitude,
-                    hospital!!.get(i).latitdue,
-                    hospital!!.get(i).longitude
-                )
+                cal = distance(latitude,longitude,hospital!!.get(i).latitdue,hospital!!.get(i).longitude)
                 if (cal < min) {
                     min = cal
                     model.setShortest_name(hospital!!.get(i).name)
                     model.setShortest_latitude(hospital!!.get(i).latitdue)
                     model.setShortest_longitude(hospital!!.get(i).longitude)
-                    model.setShortest_address(hospital!!.get(i).internet_address)
+                    model.setShortest_address("https://".plus(hospital!!.get(i).internet_address))
                     model.setShortest_number(hospital!!.get(i).number)
                 }
             }
-            Log.d("병원:",
-                model.getShortest_name()
-                    .toString() + " " + model.getShortest_latitude() + " " + model.getShortest_longitude()
-            )
+
             showCurrentLocation(
-                model.getShortest_name().toString(), model.getShortest_latitude().value!!,
-                model.getShortest_longitude().value!!, model.getShortest_number().toString()
+                model.getShortest_name().value.toString(), model.getShortest_latitude().value!!,
+                model.getShortest_longitude().value!!, model.getShortest_number().value.toString()
             )
         }
 
@@ -219,9 +212,8 @@ class MapFragment: Fragment() {
         if (ActivityCompat.checkSelfPermission(cont, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 cont, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             loadAllPermissions((context as Activity?)!!, 101)
-            return
         }
-        map.setMyLocationEnabled(true)
+        //map.setMyLocationEnabled(true)
     }
 
     override fun onPause() {
@@ -232,6 +224,7 @@ class MapFragment: Fragment() {
             loadAllPermissions((context as Activity?)!!, 101)
             return
         }
+
         map.setMyLocationEnabled(false)
     }
 }

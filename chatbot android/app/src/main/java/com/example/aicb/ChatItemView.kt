@@ -1,6 +1,8 @@
 package com.example.aicb
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -25,6 +27,7 @@ class ChatItemView(context: Context?) : LinearLayout(context) {
         chat2 = findViewById(R.id.comment)
     }
 
+    @SuppressLint("RtlHardcoded")
     fun setChat(chat: String, check: Int, context: Context) {
 
         //check가 0이면 user, 1이면 bot
@@ -53,6 +56,8 @@ class ChatItemView(context: Context?) : LinearLayout(context) {
             chat1!!.gravity = Gravity.RIGHT
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT)
             chat1!!.text = chat
+            chat1!!.setBackgroundResource(R.drawable.yellow)
+            chat1!!.setTextColor(Color.BLACK)
         }
         else {
             init_bot(context)
@@ -73,6 +78,9 @@ class ChatItemView(context: Context?) : LinearLayout(context) {
             }
             layoutParams.setMargins(0, 0, 0, 15) // llp.setMargins(left, top, right, bottom);
             chat2!!.text = chat
+            chat2!!.gravity = Gravity.LEFT
+            chat2!!.setBackgroundResource(R.drawable.purple)
+            chat2!!.setTextColor(Color.WHITE)
         }
     }
 }
