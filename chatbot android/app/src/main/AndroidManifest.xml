@@ -30,7 +30,7 @@
         <!--API 키를 받아 value에 넣어주기, console.developers.google.com에서 Maps SDK for android-->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBHhQxCXvWb5kDO0AszpipHzUACrpg6K9o"/>
+            android:value=""/>
 
         <meta-data
             android:name="com.google.android.gmls.version"
