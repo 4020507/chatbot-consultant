@@ -37,6 +37,7 @@ class MapFragment: Fragment() {
     lateinit var cont: Context
     var myLocationMarker: MarkerOptions? = null
 
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = activity as MainActivity?
@@ -115,11 +116,19 @@ class MapFragment: Fragment() {
             val size: Int = hospital!!.size
             var min = 999999999.0
             var cal: Double
-            model.setShortest_name("")
+
+            model.apply{
+                setShortest_name("")
+                setShortest_latitude(0.0)
+                setShortest_longitude(0.0)
+                setShortest_address("")
+                setShortest_number("")
+            }
+            /*model.setShortest_name("")
             model.setShortest_latitude(0.0)
             model.setShortest_longitude(0.0)
             model.setShortest_address("")
-            model.setShortest_number("")
+            model.setShortest_number("")*/
 
             //lat lon lat lon
             for (i in 0 until size) {
@@ -186,6 +195,14 @@ class MapFragment: Fragment() {
         private fun showMyLocationMarker(name: String, curPoint: LatLng, number: String) {
             if (myLocationMarker == null) {
                 myLocationMarker = MarkerOptions()
+                myLocationMarker?.apply{
+                    position(curPoint)
+                    title(name)
+                    snippet(number)
+                    icon(BitmapDescriptorFactory.defaultMarker(
+                        BitmapDescriptorFactory.HUE_VIOLET
+                    ))
+                }
                 myLocationMarker!!.position(curPoint)
                 myLocationMarker!!.title(name)
                 myLocationMarker!!.snippet(number)

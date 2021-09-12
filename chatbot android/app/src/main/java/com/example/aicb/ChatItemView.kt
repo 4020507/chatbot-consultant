@@ -53,11 +53,13 @@ class ChatItemView(context: Context?) : LinearLayout(context) {
                 chat1!!.layoutParams = layoutParams
             }
             layoutParams.setMargins(0, 0, 0, 15) // llp.setMargins(left, top, right, bottom);
-            chat1!!.gravity = Gravity.RIGHT
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT)
-            chat1!!.text = chat
-            chat1!!.setBackgroundResource(R.drawable.yellow)
-            chat1!!.setTextColor(Color.BLACK)
+            chat1!!.apply{
+                gravity = Gravity.RIGHT
+                text = chat
+                setBackgroundResource(R.drawable.yellow)
+                setTextColor(Color.BLACK)
+            }
         }
         else {
             init_bot(context)
@@ -77,10 +79,13 @@ class ChatItemView(context: Context?) : LinearLayout(context) {
                 chat2!!.layoutParams = layoutParams
             }
             layoutParams.setMargins(0, 0, 0, 15) // llp.setMargins(left, top, right, bottom);
-            chat2!!.text = chat
-            chat2!!.gravity = Gravity.LEFT
-            chat2!!.setBackgroundResource(R.drawable.purple)
-            chat2!!.setTextColor(Color.WHITE)
+
+            chat2!!.apply{
+                gravity = Gravity.LEFT
+                text = chat
+                setBackgroundResource(R.drawable.purple)
+                setTextColor(Color.WHITE)
+            }
         }
     }
 }
